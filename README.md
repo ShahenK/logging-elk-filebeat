@@ -83,3 +83,11 @@ output.logstash:
   # Client Certificate Key
   #ssl.key: "/etc/pki/client/cert.key"
 ```
+then filebeat service should be started
+
+```
+service filebeat start
+```
+Filebeat will trying to sent log entries row by row to logstash, also there are rules for excluding some trace rows in laravel log and defined <b>fields:</b> <b>type</b> and <b>log_prefix</b> that will used in logstash configuration file.
+
+It's need to create <b>logstash.conf</b> in pipeline folder for receiving filebeat stream, applying filters, and dynamically create indixces for separate log types. 
