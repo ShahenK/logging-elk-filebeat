@@ -134,3 +134,14 @@ output {
    stdout { codec => rubydebug }
 }
 ```
+Then we should starting ELK containers. 
+
+After receiving event that will add row in logs logstash will pass formatted data to elasticsearch.
+
+In our case for checking logstash container log use command below.
+
+```
+sudo docker logs -f container_id
+```
+
+After we need to configure <b>Kibana</b> to creating <b>Data View</b>.
