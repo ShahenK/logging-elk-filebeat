@@ -90,4 +90,47 @@ service filebeat start
 ```
 Filebeat will trying to sent log entries row by row to logstash, also there are rules for excluding some trace rows in laravel log and defined <b>fields:</b> <b>type</b> and <b>log_prefix</b> that will used in logstash configuration file.
 
-It's need to create <b>logstash.conf</b> in pipeline folder for receiving filebeat stream, applying filters, and dynamically create indixces for separate log types. 
+It's need to create <b>logstash.conf</b> in pipeline folder for receiving filebeat stream, applying filters, and dynamically create indixces for separate log types.
+
+<b>logstash.conf</b>
+
+```
+input {  
+   beats {
+      # The port to listen on for filebeat connections.
+      port => 5044
+      # The IP address to listen for filebeat connections.
+      host => "0.0.0.0"
+   }
+}
+filter {
+   if [type] == "access" {
+       grok {
+           match => { "message" => "%{IPORHOST:remote_ip} - %{DATA:user} \[%{HTTPDATE:access_time}\] \"%{WORD:http_method} %{DATA:url} HTTP/%{NUMBER:http_version}\" %{NUMBER:response_code} %{NUMBER:body_sent_bytes} \"%{DATA:referrer}\" \"%{DATA:agent}\"" }
+       }
+   }
+   if [type] == "laravel" {
+       grok {
+          #match => { "message" => "\[%{TIMESTAMP_ISO8601:timestamp}\] %{DATA:env}\.%{DATA:severity}: %{DATA:message}" }
+          match => { "message" => "\[%{TIMESTAMP_ISO8601:timestamp}\] %{DATA:env}\.%{DATA:severity}: %{DATA:message} \{" } 
+      }
+   }
+   if [type] == "error" {
+      grok {
+         match => { "message" => "(?<timestamp>%{YEAR}[./]%{MONTHNUM}[./]%{MONTHDAY} %{TIME}) \[%{LOGLEVEL:severity}\] %{POSINT:pid}#%{NUMBER:threadid}\: \*%{NUMBER:connectionid} %{GREEDYDATA:errormessage}, client: %{IP:client}, server: %{GREEDYDATA:server}, request: \"(?<httprequest>%{WORD:httpcommand} %{UNIXPATH:httpfile} HTTP/(?<httpversion>[0-9.]*))\"(, )?(upstream: \"(?<upstream>[^,]*)\")?(, )?(host: \"(?<host>[^,]*)\")?" }
+      }
+   }
+   mutate {
+      copy => {
+         "[log_prefix]" => "[@metadata][log_prefix]"
+      }
+   }
+}
+output {
+   elasticsearch {
+       hosts => ["elasticsearch:9200"]
+       index => "%{[@metadata][log_prefix]}.logs"
+   }
+   stdout { codec => rubydebug }
+}
+```
