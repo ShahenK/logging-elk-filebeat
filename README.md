@@ -111,7 +111,6 @@ filter {
    }
    if [type] == "laravel" {
        grok {
-          #match => { "message" => "\[%{TIMESTAMP_ISO8601:timestamp}\] %{DATA:env}\.%{DATA:severity}: %{DATA:message}" }
           match => { "message" => "\[%{TIMESTAMP_ISO8601:timestamp}\] %{DATA:env}\.%{DATA:severity}: %{DATA:message} \{" } 
       }
    }
@@ -144,4 +143,4 @@ In our case for checking logstash container log use command below.
 sudo docker logs -f container_id
 ```
 
-After we need to configure <b>Kibana</b> to creating <b>Data View</b>.
+After need to configure <b>Kibana</b> to creating <b>Data View</b>.
