@@ -90,7 +90,7 @@ service filebeat start
 ```
 Filebeat will trying to sent log entries row by row to logstash, also there are rules for excluding some trace rows in laravel log and defined <b>fields:</b> <b>type</b> and <b>log_prefix</b> that will used in logstash configuration file.
 
-It's need to create <b>logstash.conf</b> in pipeline folder for receiving filebeat stream, applying filters, and dynamically create indixces for separate log types.
+It's need to create <b>logstash.conf</b> in pipeline folder for receiving filebeat stream, applying filters, and dynamically create indixes for separate log types.
 
 <b>logstash.conf</b>
 
@@ -143,4 +143,4 @@ In our case for checking logstash container log use command below.
 sudo docker logs -f container_id
 ```
 
-After need to configure <b>Kibana</b> to creating <b>Data View</b>.
+After need to configure <b>Kibana</b> for creating <b>Data View</b>.
