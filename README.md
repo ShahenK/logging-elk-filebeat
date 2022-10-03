@@ -143,4 +143,7 @@ In our case for checking logstash container log use command below.
 sudo docker logs -f container_id
 ```
 
-After need to configure <b>Kibana</b> for creating <b>Data View</b>.
+After need to configure <b>Kibana</b>. In <b>Stack Management</b> -> <b>Index Management</b> we will find our indexes as shown in picture below. Then  we will create <b>Data Views</b> -> <b>Create data view</b> for monitoring of logs data.
+
+![image](https://user-images.githubusercontent.com/77299643/193511338-eefcf7ea-a845-488e-b6ed-97a6d756db3e.png)
+
